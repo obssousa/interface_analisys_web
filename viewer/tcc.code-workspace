@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\search"
+		},
+		{
+			"path": "..\\webtracer"
+		}
+	],
+	"settings": {}
+}

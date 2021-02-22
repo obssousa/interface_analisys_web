@@ -1,0 +1,116 @@
+#botoes_busca{
+    text-align: center;
+    margin-bottom: 20px;
+}
+#botoes_busca a{
+    margin: 30px;
+}
+#info_resultado{
+    text-align: center;
+}
+
+/* sociallikes */
+
+#viewlet-below-content-title #viewlet-social-like {
+    width: 50%;
+}
+
+#viewlet-below-content-title > #viewlet-social-like > div,
+#viewlet-below-content-title > #viewlet-social-like > div,
+#viewlet-below-content-title > #viewlet-social-like > div {
+    margin-top: 1px;
+    float: left;
+}
+
+#viewlet-social-like .whatsapp,
+#viewlet-social-like .facebook,
+#viewlet-social-like .twitter,
+#viewlet-social-like .linkedin
+{
+    font-size: 82%;
+
+    display: inline-block;
+    overflow: hidden;
+
+    height: 20px;
+    padding: 0 10px 0 24px;
+
+    white-space: nowrap;
+
+    color: #fff !important;
+    border: 0 !important;
+    border-bottom: none !important;
+    border-radius: 3px;
+    background-repeat: no-repeat;
+}
+
+#viewlet-social-like .whatsapp.link,
+#viewlet-social-like .facebook.link,
+#viewlet-social-like .twitter.link,
+#viewlet-social-like .linkedin.link
+{
+    width: 0;
+    padding: 0 20px;
+    text-indent: -200%;
+    background-position: 50%;
+}
+
+#viewlet-social-like .whatsapp,
+#viewlet-social-like .facebook,
+#viewlet-social-like .twitter,
+#viewlet-social-like .linkedin
+{
+    background-position: 2px 2px;
+    margin-top: 1px;
+}
+
+#viewlet-social-like .whatsapp
+{
+    background-image: url(++resource++serpro.portalrfb/ico-whatsapp.svg);
+    background-color: #199e0e;
+    background-size: 16px;
+}
+
+#viewlet-social-like .facebook
+{
+    background-image: url(++resource++serpro.portalrfb/share-facebook.png);
+    background-color: #365899;
+    background-size: 30px;
+}
+
+#viewlet-social-like .twitter
+{
+    background-image: url(++resource++serpro.portalrfb/share-twitter.png);
+    background-color: rgb(29, 161, 242);
+    background-size: 25px;
+}
+
+#viewlet-social-like .linkedin
+{
+    background-image: url(++resource++serpro.portalrfb/share-linkedin.png);
+    background-color: rgb(0, 115, 177);
+    background-size: 14px;
+}
+
+#viewlet-social-like .whatsapp:hover,
+#viewlet-social-like .facebook:hover,
+#viewlet-social-like .twitter:hover,
+#viewlet-social-like .linkedin:hover
+{
+    color: #fff !important;
+}
+
+#content #viewlet-social-like > .sociallike-network-facebook {
+    padding-left: 0px;
+}
+
+@media (min-width: 768px) {
+  .hidden-md {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .hidden-sm {
+    display: none !important;
+  }
+}

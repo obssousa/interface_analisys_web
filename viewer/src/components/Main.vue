@@ -39,8 +39,7 @@ export default {
   data: () => ({
     sampleData: [],
     samples: [],
-    images: [],
-    selectedSample: [],
+    sampleImages: [],
     ctx: 0,
     globalIndex: 1000000000000000,
     samples_url: [],
@@ -62,45 +61,20 @@ export default {
   methods: {
     changeSelectedSample () {
       api.getSample(this.sample_selected, 'c3954b1339e9ba5a7c546da866aafa3063256c812882c3da7fc6e9f3ad48e').then(res => {
-        this.sampleData = res[res.length - 1]
-        console.log('sampleData', this.sampleData)
-        this.images = res.splice(res[res.length - 1])
-        console.log('images', this.sampleData)
-      })
-      // this.interval = setInterval(() => this.findImagesInRealData(), 5000)
-    },
-    findImagesInRealData () {
-      api.getImages(this.selected_path).then(response => {
-        this.image_in_view = this.images[2]
-        api.getSample(this.selectedObj.real_path).then(response => {
-          this.findImageData()
-        })
-      })
-    },
-    findImages () {
-      api.getImages(this.selected_path).then(response => {
-        this.image_in_view = this.images[2]
-      })
-    },
-    findTraceData () {
-      api.getSample(this.selectedObj.real_path).then(response => {
+        console.log(res)
+        this.sampleData = res.data
+        this.sampleImages = res.images
         this.findImageData()
       })
-    },
-    groupBy2 (arr, property) {
-      return arr.reduce(function (memo, x) {
-        if (!memo[x[property]]) { memo[x[property]] = [] }
-        memo[x[property]].push(x)
-        return memo
-      }, {})
+      // this.interval = setInterval(() => this.findImagesInRealData(), 5000)
     },
     findImageData () {
       var data = []
       var lastScroll = 0
       var imagesByTime = []
       var array = []
-      this.selectedSample.sort((a, b) => (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0))
-      var traceInAnalysis = this.selectedSample[this.selectedSample.length - 1]
+      this.sampleData.sort((a, b) => (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0))
+      var traceInAnalysis = this.sampleData[this.sampleData.length - 1]
       traceInAnalysis.forEach(time => {
         var image = this.findImageURL(time.image)
         var xdata = time.X
@@ -126,6 +100,13 @@ export default {
       mergeImages(imagesByTime[0], { crossOrigin: 'Anonymous', height: 2613 })
         .then(b64 => { document.querySelector('img').src = b64 })
       this.drawSimpleheat(data)
+    },
+    groupBy2 (arr, property) {
+      return arr.reduce(function (memo, x) {
+        if (!memo[x[property]]) { memo[x[property]] = [] }
+        memo[x[property]].push(x)
+        return memo
+      }, {})
     },
     drawSimpleheat (data) {
       var canvas = document.getElementById('plotter')

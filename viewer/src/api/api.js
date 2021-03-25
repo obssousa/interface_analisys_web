@@ -16,8 +16,10 @@ export default {
   },
   getData (site, userId) {
     return api
-      .get('../Samples/' + site + '/' + userId + '/trace.json')
-      .then(res => { return res.data })
+      .post('getData.php', { site, userId })
+      .then(res => {
+        return res.data
+      })
       .catch(err => {
         return Promise.reject(err)
       })
@@ -27,12 +29,13 @@ export default {
     return api
       .post('getSpecificSample.php', selectedSample)
       .then(res => {
-        const images = res.data
-        console.log(images)
+        const obj = {}
+        obj.images = res.data
         this.getData(site, userId).then(res => {
-          images.push(res)
+          obj.data = res
         })
-        return res.data
+        console.log(obj)
+        return obj
       })
       .catch(err => {
         return Promise.reject(err)

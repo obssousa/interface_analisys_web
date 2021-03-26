@@ -11,7 +11,7 @@ $allDirs = [];
 $dir = new DirectoryIterator($path);
 foreach ($dir as $fileinfo) {
     if (!$fileinfo->isDot()) {
-        array_push($allDirs, $path.'/'.$fileinfo->getFileName());
+        array_push($allDirs, 'http://localhost:80/webtracer/Samples/'.$site.'/'.$userId.'/'.$fileinfo->getFileName());
     }
 }
 if ($method == 'POST') {

@@ -61,12 +61,10 @@ export default {
   methods: {
     changeSelectedSample () {
       api.getSample(this.sample_selected, 'c3954b1339e9ba5a7c546da866aafa3063256c812882c3da7fc6e9f3ad48e').then(res => {
-        console.log(res)
-        this.sampleData = res.data
+        this.sampleData = res.trace
         this.sampleImages = res.images
-        this.findImageData()
       })
-      // this.interval = setInterval(() => this.findImagesInRealData(), 5000)
+      this.interval = setInterval(() => this.findImageData(), 5000)
     },
     findImageData () {
       var data = []
@@ -100,6 +98,15 @@ export default {
       mergeImages(imagesByTime[0], { crossOrigin: 'Anonymous', height: 2613 })
         .then(b64 => { document.querySelector('img').src = b64 })
       this.drawSimpleheat(data)
+    },
+    findImageURL (traceImage) {
+      let url = ''
+      this.sampleImages.forEach((item, index) => {
+        if ((/[^/]*$/.exec(item)[0]) === traceImage) {
+          url = item
+        }
+      })
+      return url
     },
     groupBy2 (arr, property) {
       return arr.reduce(function (memo, x) {

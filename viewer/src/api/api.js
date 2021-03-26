@@ -28,13 +28,12 @@ export default {
     const selectedSample = { site: site, userId: userId }
     return api
       .post('getSpecificSample.php', selectedSample)
-      .then(res => {
+      .then(async (res) => {
         const obj = {}
         obj.images = res.data
-        this.getData(site, userId).then(res => {
-          obj.data = res
+        await this.getData(site, userId).then(res => {
+          obj.trace = res
         })
-        console.log(obj)
         return obj
       })
       .catch(err => {

@@ -14,6 +14,14 @@ export default {
         return Promise.reject(err)
       })
   },
+  getAllUsers (site) {
+    return api
+      .post('getUsers.php', { site })
+      .then(res => res.data)
+      .catch(err => {
+        return Promise.reject(err)
+      })
+  },
   getData (site, userId) {
     return api
       .post('getData.php', { site, userId })

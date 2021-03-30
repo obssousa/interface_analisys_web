@@ -4,14 +4,26 @@
     <v-row justify="center">
       <v-col class="d-flex" cols="12" sm="6">
         <v-select
-          v-model="sample_selected"
-          :items="samples"
-          @change="changeSelectedSample()"
-          filled
-          label="Filled style"
-          dense
-          item-value="sample_name"
-          item-text="sample_name"
+            v-model="sample_selected"
+            :items="samples"
+            @change="changeSelectedSample()"
+            filled
+            label="Filled style"
+            dense
+            item-value="sample_name"
+            item-text="sample_name"
+        ></v-select>
+      </v-col>
+      <v-col class="d-flex" cols="12" sm="6">
+        <v-select
+            v-model="user_selected"
+            :items="users"
+            @change="changeSelectedUser()"
+            filled
+            label="Filled style"
+            dense
+            item-value="sample_name"
+            item-text="sample_name"
         ></v-select>
       </v-col>
     </v-row>
@@ -50,6 +62,8 @@ export default {
     selectedObj: [],
     images_scroll: [],
     selected_img: [],
+    users: [],
+    user_selected: '',
     heat: ''
   }),
   components: {},
@@ -60,7 +74,12 @@ export default {
   },
   methods: {
     changeSelectedSample () {
-      api.getSample(this.sample_selected, 'c3954b1339e9ba5a7c546da866aafa3063256c812882c3da7fc6e9f3ad48e').then(res => {
+      api.getAllUsers(this.sample_selected).then(res => {
+        this.users = res
+      })
+    },
+    changeSelectedUser () {
+      api.getSample(this.sample_selected, this.user_selected).then(res => {
         this.sampleData = res.trace
         this.sampleImages = res.images
       })

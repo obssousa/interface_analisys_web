@@ -22,27 +22,14 @@ export default {
         return Promise.reject(err)
       })
   },
-  getData (site, userId) {
+  getData (site, userId, time) {
+    if (!time) {
+      time = 0
+    }
     return api
-      .post('getData.php', { site, userId })
+      .post('getData.php', { site, userId, time })
       .then(res => {
         return res.data
-      })
-      .catch(err => {
-        return Promise.reject(err)
-      })
-  },
-  getSample (site, userId) {
-    const selectedSample = { site: site, userId: userId }
-    return api
-      .post('getSpecificSample.php', selectedSample)
-      .then(async (res) => {
-        const obj = {}
-        obj.images = res.data
-        await this.getData(site, userId).then(res => {
-          obj.trace = res
-        })
-        return obj
       })
       .catch(err => {
         return Promise.reject(err)

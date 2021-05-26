@@ -1,6 +1,6 @@
 <template>
   <div>
-    <br />
+    <br/>
     <v-row justify="center">
       <v-col class="d-flex" cols="12" sm="6">
         <v-select
@@ -28,20 +28,46 @@
       </v-col>
     </v-row>
     <v-row justify="center">
+      <v-card>
+        <v-tabs
+            v-model="tab"
+            background-color="deep-purple accent-4"
+            dark
+        >
+          <v-tab href="#heatmap">Heatmap</v-tab>
+          <v-tab href="#vectorization">Vector</v-tab>
+        </v-tabs>
+      </v-card>
     </v-row>
-    <div style="margin-top: 30px">
-    <div id="container" style="width: 1366px; height: 2596px; position: absolute;">
-    <canvas id='plotter' style="position: absolute; opacity: 75%;"> </canvas>
-    <img class='img' />
-    </div>
-    </div>
+    <v-tabs-items v-model="tab">
+      <v-tab-item
+          value="heatmap"
+      >
+        <div style="margin-top: 30px">
+          <v-row align="center" justify="center">
+          <div id="container" style="width: 50%; height: auto;">
+
+            <canvas id='plotter' style="position: absolute; opacity: 75%;"></canvas>
+            <img id='img' style="width: 100%; height: auto;" class='img'/>
+          </div>
+          </v-row>
+        </div>
+      </v-tab-item>
+      <v-tab-item
+          value="vectorization"
+      >
+        <v-card flat>
+          <v-card-text>VAMOPORA</v-card-text>
+        </v-card>
+      </v-tab-item>
+    </v-tabs-items>
   </div>
 </template>
 
 <script>
 import api from '../api/api'
 import simpleheat from 'simpleheat'
-import mergeImages from 'merge-images'
+// import mergeImages from 'merge-images'
 
 export default {
   name: 'Main',
@@ -60,11 +86,11 @@ export default {
     image_in_view: {},
     image_pos: 0,
     selectedObj: [],
-    images_scroll: [],
-    selected_img: [],
     users: [],
     user_selected: '',
-    heat: ''
+    heat: '',
+    tab: '',
+    lastTime: 0
   }),
   components: {},
   mounted () {
@@ -79,76 +105,50 @@ export default {
       })
     },
     changeSelectedUser () {
-      api.getSample(this.sample_selected, this.user_selected).then(res => {
-        this.sampleData = res.trace
-        this.sampleImages = res.images
+      this.getDataFromStorage()
+      setInterval(() => this.getDataFromStorage(), 1000)
+      setInterval(() => this.findImageData(), 1500)
+    },
+    getDataFromStorage () {
+      api.getData(this.sample_selected, this.user_selected, this.lastTime).then(res => {
+        this.sampleData = res
       })
-      this.interval = setInterval(() => this.findImageData(), 5000)
     },
     findImageData () {
-      var data = []
-      var lastScroll = 0
-      var imagesByTime = []
-      var array = []
+      var data = []; var image = null; var xdata = 0; var ydata = 0; var zdata = 0
       this.sampleData.sort((a, b) => (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0))
       var traceInAnalysis = this.sampleData[this.sampleData.length - 1]
-      traceInAnalysis.forEach(time => {
-        var image = this.findImageURL(time.image)
-        var xdata = time.X
-        var ydata = time.Y
-        var zdata = 1
-        data.push([xdata, ydata, zdata])
-        if (image !== '') {
-          if (array.length === 0) {
-            array.push({ src: image, x: 0, y: lastScroll })
-          }
-          if ((time.scroll - lastScroll) >= 600) {
-            lastScroll = time.scroll
-            array.push({ src: image, x: 0, y: lastScroll })
-          }
-          // array.push({ src: image, x: 0, y: lastScroll })
-        }
-        // console.log(lastScroll)
-        imagesByTime.push(array)
-        lastScroll = 0
+      traceInAnalysis.forEach(analisys => {
+        image = 'http://localhost:80/webtracer/Samples/' + this.sample_selected + '/' + this.user_selected + '/' + analisys.image
+        xdata = analisys.X
+        ydata = analisys.Y
+        zdata = 1
+        this.lastTime = analisys.time
+        if (analisys.image !== '') { data.push([xdata, ydata, zdata]) }
       })
-      this.images_scroll = imagesByTime
-      this.selected_img = imagesByTime[0]
-      mergeImages(imagesByTime[0], { crossOrigin: 'Anonymous', height: 2613 })
-        .then(b64 => { document.querySelector('img').src = b64 })
+      document.querySelector('img').src = image
       this.drawSimpleheat(data)
-    },
-    findImageURL (traceImage) {
-      let url = ''
-      this.sampleImages.forEach((item, index) => {
-        if ((/[^/]*$/.exec(item)[0]) === traceImage) {
-          url = item
-        }
-      })
-      return url
-    },
-    groupBy2 (arr, property) {
-      return arr.reduce(function (memo, x) {
-        if (!memo[x[property]]) { memo[x[property]] = [] }
-        memo[x[property]].push(x)
-        return memo
-      }, {})
     },
     drawSimpleheat (data) {
       var canvas = document.getElementById('plotter')
+      this.fitToContainer(canvas)
+      var img = document.getElementById('img')
       var heat = simpleheat(canvas).data(data)
       var ctx = canvas.getContext('2d')
-      canvas.height = 2613
-      canvas.width = 9000
-      ctx.clearRect(0, 0, 9000, 2613)
-      // ctx.drawImage(background, 0, 0)
-      // var img = document.getElementsByTagName('img')[0]
-      // img.src = ctx.toDataURL()
+      ctx.drawImage(img, 10, 10)
       heat.clear()
       heat.max(1)
       heat.data(data)
       heat.draw(0.05)
       heat.radius(10, 30)
+    },
+    fitToContainer (canvas) {
+      // Make it visually fill the positioned parent
+      canvas.style.width = '50%'
+      canvas.style.height = '100%'
+      // ...then set the internal size to match
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
     }
   }
 }
@@ -171,7 +171,7 @@ export default {
 .ibagem {
   width: 100%;
   position: absolute;
-  left:0px;
+  left: 0px;
 }
 
 </style>

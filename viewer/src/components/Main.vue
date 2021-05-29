@@ -90,7 +90,8 @@ export default {
     user_selected: '',
     heat: '',
     tab: '',
-    lastTime: 0
+    lastTime: 0,
+    lastImage: ''
   }),
   components: {},
   mounted () {
@@ -115,27 +116,27 @@ export default {
       })
     },
     findImageData () {
-      var data = []; var image = null; var xdata = 0; var ydata = 0; var zdata = 0
+      var data = []; var xdata = 0; var ydata = 0; var zdata = 0
+      console.log(this.sampleData)
       this.sampleData.sort((a, b) => (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0))
-      var traceInAnalysis = this.sampleData[this.sampleData.length - 1]
-      traceInAnalysis.forEach(analisys => {
-        image = 'http://localhost:80/webtracer/Samples/' + this.sample_selected + '/' + this.user_selected + '/' + analisys.image
+      this.sampleData.forEach(analisys => {
         xdata = analisys.X
         ydata = analisys.Y
         zdata = 1
         this.lastTime = analisys.time
-        if (analisys.image !== '') { data.push([xdata, ydata, zdata]) }
+        if (analisys.image !== '') {
+          this.lastImage = 'http://localhost:80/webtracer/Samples/' + this.sample_selected + '/' + this.user_selected + '/' + analisys.image
+          data.push([xdata, ydata, zdata])
+        }
       })
-      document.querySelector('img').src = image
+      document.querySelector('img').src = this.lastImage
       this.drawSimpleheat(data)
     },
     drawSimpleheat (data) {
       var canvas = document.getElementById('plotter')
       this.fitToContainer(canvas)
-      var img = document.getElementById('img')
       var heat = simpleheat(canvas).data(data)
-      var ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 10, 10)
+      // var ctx = canvas.getContext('2d')
       heat.clear()
       heat.max(1)
       heat.data(data)
